@@ -1,0 +1,11 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+  "spellright.language": [
+    "English (American)"
+  ],
+  "spellright.documentTypes": [
+    "markdown",
+    "latex",
+    "plaintext"
+  ]
+}
