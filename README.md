@@ -1,1 +1,1 @@
-# Discover Axis Communication devices using SSDP for Go
+# Axis Communication device discovery for Go
