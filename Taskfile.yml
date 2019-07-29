@@ -2,6 +2,10 @@ version: '2'
 
 tasks:
 
+  test:
+    cmds:
+      - go test ./...
+
   vet:
     cmds:
       - go vet ./...
@@ -13,6 +17,7 @@ tasks:
 
   build:
     deps:
+      - test
       - vet
       - lint
     cmds:

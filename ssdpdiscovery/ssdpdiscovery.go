@@ -24,7 +24,10 @@ func ListenPassive() (err error) {
 		if err != nil {
 			panic(err)
 		} else {
-			fmt.Printf("Received %s from %s\n", string(b[0:n]), addr)
+			fmt.Println("BEGIN-----------------------------------------------------------------")
+			fmt.Println("Received from", addr)
+			fmt.Println(string(b[0:n]))
+			fmt.Println("END-------------------------------------------------------------------")
 		}
 	}
 }
