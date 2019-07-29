@@ -1,2 +1,5 @@
 # JetBrains GoLand
 .idea
+
+# Bin directory
+bin

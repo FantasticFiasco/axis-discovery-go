@@ -1,10 +1,16 @@
 language: go
 
+os:
+  - linux
+  - osx
+
 go:
   - 1.x
+
+sudo: false
 
 install:
   - curl -sL https://taskfile.dev/install.sh | sh
 
 script:
-  - ./bin/task build
+  - env GO111MODULE=on ./bin/task build
