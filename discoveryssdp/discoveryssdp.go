@@ -3,6 +3,7 @@ package discoveryssdp
 
 import "fmt"
 
+// Placeholder is just that, a placeholder...
 func Placeholder() {
 	fmt.Println("Hello world")
 }

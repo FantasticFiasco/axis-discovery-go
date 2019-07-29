@@ -1,0 +1,19 @@
+version: '2'
+
+tasks:
+
+  vet:
+    cmds:
+      - go vet ./...
+
+  lint:
+    cmds:
+      - go get golang.org/x/lint/golint
+      - golint -set_exit_status ./...
+
+  build:
+    deps:
+      - vet
+      - lint
+    cmds:
+      - go build ./...
