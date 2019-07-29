@@ -1,10 +1,9 @@
-// Package discoveryssdp provides means to discover devices from Axis Communications on the network using SSDP.
-package discoveryssdp
+// Package ssdpdiscovery provides means to discover devices from Axis Communications on the network using SSDP.
+package ssdpdiscovery
 
 import (
+	"fmt"
 	"net"
-
-	"golang.org/x/tools/go/ssa/interp/testdata/src/fmt"
 )
 
 // ListenPassive todo
