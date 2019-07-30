@@ -1,22 +1,35 @@
 package ssdpdiscovery
 
 import (
+	"net"
+	"reflect"
 	"testing"
 )
 
 func TestParseNotifyMessage(t *testing.T) {
 	want := struct {
-		addr, mac string
+		addr net.UDPAddr
+		mac string
 	}{
-		"192.168.1.102", "ACCC8E270AD8",
+		addr,
+		"ACCC8E270AD8",
 	}
-	got := newMessage(notifyMessage).parseNotify()
-	if got.Addr != want.addr {
+	got, err := newMessage(addr, notifyMessage).parseNotify()
+	if err != nil {
+		t.Error(err)
+	}
+	if !reflect.DeepEqual(got.Addr, want.addr.IP) {
 		t.Errorf("got.Addr == %q, want %q", got.Addr, want.addr)
 	}
 	if got.MACAddr != want.mac {
 		t.Errorf("got.MACAddr == %q, want %q", got.MACAddr, want.mac)
 	}
+}
+
+var addr = net.UDPAddr{
+	IP:   []byte{ 192, 168, 1, 100 },
+	Port: 80,
+	Zone: "",
 }
 
 var notifyMessage = []byte("NOTIFY * HTTP/1.1\r\n" +
