@@ -1,7 +1,6 @@
 package ssdpdiscovery
 
 import (
-	"net"
 	"testing"
 )
 
@@ -11,7 +10,7 @@ func TestParseNotifyMessage(t *testing.T) {
 	}{
 		"192.168.1.102", "ACCC8E270AD8",
 	}
-	got := message{ addr, []byte(notifyMessage)}.parse()
+	got := newMessage(notifyMessage).parseNotify()
 	if got.Addr != want.addr {
 		t.Errorf("got.Addr == %q, want %q", got.Addr, want.addr)
 	}
@@ -20,13 +19,7 @@ func TestParseNotifyMessage(t *testing.T) {
 	}
 }
 
-var addr = net.UDPAddr{
-	IP:   []byte{192, 168, 1, 102},
-	Port: 80,
-	Zone: "",
-}
-
-var notifyMessage = "NOTIFY * HTTP/1.1\r\n" +
+var notifyMessage = []byte("NOTIFY * HTTP/1.1\r\n" +
 	"HOST: 239.255.255.250:1900\r\n" +
 	"CACHE-CONTROL: max-age=1800\r\n" +
 	"LOCATION: http://192.168.1.102:45895/rootdesc1.xml\r\n" +
@@ -36,4 +29,4 @@ var notifyMessage = "NOTIFY * HTTP/1.1\r\n" +
 	"NTS: ssdp:byebye\r\n" +
 	"SERVER: Linux/2.6.35, UPnP/1.0, Portable SDK for UPnP devices/1.6.18\r\n" +
 	"X-User-Agent: redsonic\r\n" +
-	"USN: uuid:Upnp-BasicDevice-1_0-ACCC8E270AD8::urn:axis-com:service:BasicService:1\r\n"
+	"USN: uuid:Upnp-BasicDevice-1_0-ACCC8E270AD8::urn:axis-com:service:BasicService:1\r\n")
