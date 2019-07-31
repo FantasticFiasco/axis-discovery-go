@@ -2,32 +2,31 @@
 package ssdpdiscovery
 
 import (
-	"fmt"
+	"github.com/pkg/errors"
 	"net"
 )
 
-// ListenPassive todo
-func ListenPassive() (err error) {
-	multicastAddress := net.UDPAddr{
-		IP:   []byte{239, 255, 255, 250},
-		Port: 1900,
-		Zone: "",
-	}
+var multicastAddress = net.UDPAddr {
+	IP:   []byte{ 239, 255, 255, 250 },
+	Port: 1900,
+}
+
+func ListenPassive(f func(d Device)) error {
 	conn, err := net.ListenMulticastUDP("udp", nil, &multicastAddress)
 	if err != nil {
-		return
+		return errors.Wrap(err, "Failed to listen to multicast address")
 	}
 	defer conn.Close()
 	b := make([]byte, 1024)
 	for {
 		n, addr, err := conn.ReadFromUDP(b)
 		if err != nil {
-			panic(err)
-		} else {
-			fmt.Println("BEGIN-----------------------------------------------------------------")
-			fmt.Println("Received from", addr)
-			fmt.Println(string(b[0:n]))
-			fmt.Println("END-------------------------------------------------------------------")
+			return errors.Wrap(err, "Failed to read from UDP connection")
+		}
+		m := newMessage(addr, b[:n])
+		d, err := m.parseNotify()
+		if err == nil {
+			f(d)
 		}
 	}
 }

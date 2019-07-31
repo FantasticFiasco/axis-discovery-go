@@ -23,7 +23,6 @@ func TestParseNotify(t *testing.T) {
 var addr = net.UDPAddr{
 	IP:   []byte{ 192, 168, 1, 100 },
 	Port: 80,
-	Zone: "",
 }
 
 var notifyMessage = []byte("NOTIFY * HTTP/1.1\r\n" +

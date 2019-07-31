@@ -1,9 +1,7 @@
 package ssdpdiscovery
 
 import (
-	"errors"
-	"fmt"
-	"github.com/FantasticFiasco/axis-discovery-go/ssdpdiscovery"
+	"github.com/pkg/errors"
 	"net"
 	"regexp"
 )
@@ -23,24 +21,24 @@ var macAddressFromMessageRegexp = regexp.MustCompile(
 	"$")					  // At end of line, since compiler flag "m" is set
 
 type message struct {
-	addr	net.UDPAddr
+	addr	*net.UDPAddr
 	b		[]byte
 }
 
-func newMessage(addr net.UDPAddr, b []byte) *message {
+func newMessage(addr *net.UDPAddr, b []byte) *message {
 	return &message{
 		addr,
 		b,
 	}
 }
 
-func (m *message) parseNotify() (d ssdpdiscovery.Device, err error) {
+func (m *message) parseNotify() (d Device, err error) {
 	match := macAddressFromMessageRegexp.FindSubmatch(m.b)
 	if match == nil  {
-		err = errors.New(fmt.Sprintf("MAC address not found in notify message %q", m.b))
+		err = errors.Errorf("MAC address not found in notify message %q", m.b)
 		return
 	}
-	d = ssdpdiscovery.Device{
+	d = Device{
 		Addr:             m.addr,
 		MACAddr:          string(match[1]),
 	}
