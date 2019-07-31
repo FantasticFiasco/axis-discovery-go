@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestParseNotifyMessage(t *testing.T) {
+func TestParseNotify(t *testing.T) {
 	want := struct {
 		addr net.UDPAddr
 		mac string
@@ -18,11 +18,18 @@ func TestParseNotifyMessage(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	if !reflect.DeepEqual(got.Addr, want.addr.IP) {
+	if !reflect.DeepEqual(got.Addr, want.addr) {
 		t.Errorf("got.Addr == %q, want %q", got.Addr, want.addr)
 	}
 	if got.MACAddr != want.mac {
 		t.Errorf("got.MACAddr == %q, want %q", got.MACAddr, want.mac)
+	}
+}
+
+func TestParseNotifyGivenNoMACAddress(t *testing.T) {
+	_, err := newMessage(addr, []byte{}).parseNotify()
+	if err == nil {
+		t.Errorf("got no error, want one")
 	}
 }
 
