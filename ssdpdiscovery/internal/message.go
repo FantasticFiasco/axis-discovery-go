@@ -14,12 +14,12 @@ var macAddressFromMessageRegexp = regexp.MustCompile(
 	"(?im)"				+ // Compiler flags, "i" for case insensitive and "m" for multiline
 	"^"						+ // At beginning of line, since compiler flag "m" is set
 	"USN:"					+ // The header name
-	"\\s*"					+ // Zero or more whitespaces
+	"\\s*"					+
 	"uuid:"					+ // UUID prefix
-	".*"					+ // Zero or more any characters
+	".*"					+
 	"([0-9a-f]{12})"		+ // The MAC address
-	"::"					+ // Separator
-	".*"					+ // Zero or more any characters
+	"::"					+
+	".*"					+
 	"$")					  // At end of line, since compiler flag "m" is set
 
 type message struct {
