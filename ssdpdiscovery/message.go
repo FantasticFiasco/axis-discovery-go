@@ -5,39 +5,35 @@ import (
 	"strings"
 )
 
-type message struct {
-	method   string
-	location string
-	usn      string
-	nt       string
-	nts      string
-}
+type message map[messageKey]string
 
-func parseMessage(b []byte) (m message) {
+type messageKey string
+
+const (
+	// Empty key is indicating "type", i.e. the only parameter not formatted as a key/value pair
+	method   messageKey = ""
+	location messageKey = "LOCATION"
+	nt       messageKey = "NT"
+	nts      messageKey = "NTS"
+	usn      messageKey = "USN"
+)
+
+func parseMessage(b []byte) message {
+	m := make(map[messageKey]string)
 	scanner := bufio.NewScanner(strings.NewReader(string(b)))
-	// First line is always the method, and is not formatted as the other lines
-	if !scanner.Scan() {
-		return
-	}
-	m.method = scanner.Text()
-	// Enumerate key/value pairs
 	for scanner.Scan() {
 		parts := strings.Split(scanner.Text(), ":")
-		if len(parts) < 2 {
-			continue
+		var key, value string
+		if len(parts) == 1 {
+			key = string(method)
+			value = parts[0]
+		} else {
+			key = parts[0]
+			value = strings.Join(parts[1:], ":")
 		}
-		key := parts[0]
-		value := strings.TrimSpace(strings.Join(parts[1:], ":"))
-		switch key {
-		case "LOCATION":
-			m.location = value
-		case "USN":
-			m.usn = value
-		case "NT":
-			m.nt = value
-		case "NTS":
-			m.nts = value
-		}
+		key = strings.TrimSpace(key)
+		value = strings.TrimSpace(value)
+		m[messageKey(key)] = value
 	}
-	return
+	return m
 }

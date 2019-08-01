@@ -6,6 +6,7 @@ import (
 )
 
 func main() {
+	fmt.Println("Listen passively for devices...")
 	err := ssdpdiscovery.ListenPassive(onAlive, onByeBye)
 	if err != nil {
 		panic(err)
