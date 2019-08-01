@@ -1,4 +1,5 @@
 package temp
+
 //
 //import (
 //	"github.com/pkg/errors"
@@ -11,7 +12,7 @@ package temp
 //var macAddressFromMessageRegexp = regexp.MustCompile(
 //	"(?im)"				+ // Compiler flags, "i" for case insensitive and "m" for multiline
 //	"^"						+ // At beginning of line, since compiler flag "m" is set
-//	"USN:"					+ // The header name
+//	"USN:"					+ // The key name
 //	"\\s*"					+
 //	"uuid:"					+ // UUID prefix
 //	".*"					+
