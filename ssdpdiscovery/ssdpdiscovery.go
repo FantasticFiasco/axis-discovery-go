@@ -2,7 +2,6 @@
 package ssdpdiscovery
 
 import (
-	"fmt"
 	"github.com/pkg/errors"
 	"net"
 )
@@ -14,7 +13,7 @@ var multicastAddr = net.UDPAddr{
 }
 
 // ListenPassive will passively listen for SSDP notifications on the network.
-func ListenPassive(onAlive func(d Device), onByeBye func(d Device)) error {
+func ListenPassive(alive func(d Device), byeBye func(d Device)) error {
 	conn, err := net.ListenMulticastUDP("udp", nil, &multicastAddr)
 	if err != nil {
 		return errors.Wrap(err, "Failed to listen to multicast address")
@@ -27,27 +26,15 @@ func ListenPassive(onAlive func(d Device), onByeBye func(d Device)) error {
 			return errors.Wrap(err, "Failed to read from UDP connection")
 		}
 		m := parseMessage(b[:n])
-		fmt.Println(">>>")
-		fmt.Printf("%+v", string(b[:n]))
-		fmt.Println("---")
-		fmt.Printf("%+v", m)
-		fmt.Println("<<<")
-
 		if m[method] != "NOTIFY * HTTP/1.1" ||
 			m[nt] != "urn:axis-com:service:BasicService:1" {
 			continue
 		}
-
 		if m[nts] == "ssdp:alive" {
-			fmt.Println("ALIVE")
-			onAlive(toDevice(addr, m))
+			alive(toDevice(addr, m))
 		} else if m[nts] == "ssdp:byebye" {
-			fmt.Println("BYEBYE")
-			onByeBye(toDevice(addr, m))
-		} else {
-			fmt.Println("UNSUPPORTED: " + m[nts] + "\n\n")
+			byeBye(toDevice(addr, m))
 		}
-
 	}
 }
 
