@@ -2,24 +2,29 @@ package ssdpdiscovery
 
 import (
 	"bufio"
+	"reflect"
 	"strings"
 )
 
-type message map[messageKey]string
+type message struct {
+	reflect.Method string
+	map[headerName]string
+}
 
-type messageKey string
+type headerName string
 
 const (
-	// Empty key is indicating "type", i.e. the only parameter not formatted as a key/value pair
-	method   messageKey = ""
-	location messageKey = "LOCATION"
-	nt       messageKey = "NT"
-	nts      messageKey = "NTS"
-	usn      messageKey = "USN"
+	// The first line in a message is the method, and it is not a header. Lets indicate this method as the header with
+	// an empty string as its name.
+	method   headerName = ""
+	location headerName = "LOCATION"
+	nt       headerName = "NT"
+	nts      headerName = "NTS"
+	usn      headerName = "USN"
 )
 
 func parseMessage(b []byte) message {
-	m := make(map[messageKey]string)
+	m := make(map[headerName]string)
 	scanner := bufio.NewScanner(strings.NewReader(string(b)))
 	for scanner.Scan() {
 		parts := strings.Split(scanner.Text(), ":")
@@ -33,7 +38,9 @@ func parseMessage(b []byte) message {
 		}
 		key = strings.TrimSpace(key)
 		value = strings.TrimSpace(value)
-		m[messageKey(key)] = value
+		m[headerName(key)] = value
 	}
 	return m
 }
+
+func (m *message) getHeaderValue(headerName headerName)

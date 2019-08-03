@@ -12,8 +12,12 @@ var multicastAddr = net.UDPAddr{
 	Port: 1900,
 }
 
+type AliveHandler func(d *Device)
+
+type ByeByeHandler func(d *Device)
+
 // ListenPassive will passively listen for SSDP notifications on the network.
-func ListenPassive(alive func(d Device), byeBye func(d Device)) error {
+func ListenPassive(alive AliveHandler, byeBye ByeByeHandler) error {
 	conn, err := net.ListenMulticastUDP("udp", nil, &multicastAddr)
 	if err != nil {
 		return errors.Wrap(err, "Failed to listen to multicast address")
@@ -38,8 +42,8 @@ func ListenPassive(alive func(d Device), byeBye func(d Device)) error {
 	}
 }
 
-func toDevice(addr *net.UDPAddr, m message) Device {
-	return Device{
+func toDevice(addr *net.UDPAddr, m message) *Device {
+	return &Device{
 		//Addr:    addr,
 		MACAddr: "TODO",
 	}
