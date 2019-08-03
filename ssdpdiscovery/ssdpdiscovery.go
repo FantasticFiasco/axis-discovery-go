@@ -12,12 +12,14 @@ var multicastAddr = net.UDPAddr{
 	Port: 1900,
 }
 
+// AliveHandler is invoked when a device is found on the network.
 type AliveHandler func(d *Device)
 
+// ByeByeHandler is invoked when a device intentionally is disconnecting from the network.
 type ByeByeHandler func(d *Device)
 
-// ListenPassive will passively listen for SSDP notifications on the network.
-func ListenPassive(alive AliveHandler, byeBye ByeByeHandler) error {
+// Lurk will passively listen for device being announced on the network.
+func Lurk(alive AliveHandler, byeBye ByeByeHandler) error {
 	conn, err := net.ListenMulticastUDP("udp", nil, &multicastAddr)
 	if err != nil {
 		return errors.Wrap(err, "Failed to listen to multicast address")
