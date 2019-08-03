@@ -44,22 +44,24 @@ var mSearchMessage = []byte(
 		"ST: urn:axis-com:service:BasicService:1\r\n" +
 		"USN: uuid:Upnp-BasicDevice-1_0-ACCC8E270AD8::urn:axis-com:service:BasicService:1\r\n")
 
-func TestParseMethod(t *testing.T) {
+func TestParseMessageGivenMethod(t *testing.T) {
 	for _, test := range []struct {
 		in   []byte
-		want string
+		want method
 	}{
-		{notifyAliveMessage, "NOTIFY * HTTP/1.1"},
-		{notifyByeByeMessage, "NOTIFY * HTTP/1.1"},
-		{mSearchMessage, "HTTP/1.1 200 OK"},
+		{notifyAliveMessage, notify},
+		{notifyByeByeMessage, notify},
+		{mSearchMessage, mSearch},
+		{[]byte("ABC"), nop},
+		{[]byte(""), nop},
 	} {
-		got := parseMessage(test.in)[method]
+		got := parseMessage(test.in).method
 		want := test.want
 		assert.Equal(t, want, got)
 	}
 }
 
-func TestParseLocation(t *testing.T) {
+func TestParseMessageGivenLocation(t *testing.T) {
 	for _, test := range []struct {
 		in []byte
 	}{
@@ -67,40 +69,43 @@ func TestParseLocation(t *testing.T) {
 		{notifyByeByeMessage},
 		{mSearchMessage},
 	} {
-		got := parseMessage(test.in)[location]
+		got := parseMessage(test.in).headers[location]
 		want := "http://192.168.1.102:45895/rootdesc1.xml"
 		assert.Equal(t, want, got)
 	}
 }
 
-func TestParseNT(t *testing.T) {
+func TestParseMessageGivenNT(t *testing.T) {
 	for _, test := range []struct {
-		in []byte
+		in   []byte
+		want string
 	}{
-		{notifyAliveMessage},
-		{notifyByeByeMessage},
+		{notifyAliveMessage, "urn:axis-com:service:BasicService:1"},
+		{notifyByeByeMessage, "urn:axis-com:service:BasicService:1"},
+		{mSearchMessage, ""},
 	} {
-		got := parseMessage(test.in)[nt]
-		want := "urn:axis-com:service:BasicService:1"
+		got := parseMessage(test.in).headers[nt]
+		want := test.want
 		assert.Equal(t, want, got)
 	}
 }
 
-func TestParseNTS(t *testing.T) {
+func TestParseMessageGivenNTS(t *testing.T) {
 	for _, test := range []struct {
 		in   []byte
 		want string
 	}{
 		{notifyAliveMessage, "ssdp:alive"},
 		{notifyByeByeMessage, "ssdp:byebye"},
+		{mSearchMessage, ""},
 	} {
-		got := parseMessage(test.in)[nts]
+		got := parseMessage(test.in).headers[nts]
 		want := test.want
 		assert.Equal(t, want, got)
 	}
 }
 
-func TestParseUSN(t *testing.T) {
+func TestParseMessageGivenUSN(t *testing.T) {
 	for _, test := range []struct {
 		in []byte
 	}{
@@ -108,7 +113,7 @@ func TestParseUSN(t *testing.T) {
 		{notifyByeByeMessage},
 		{mSearchMessage},
 	} {
-		got := parseMessage(test.in)[usn]
+		got := parseMessage(test.in).headers[usn]
 		want := "uuid:Upnp-BasicDevice-1_0-ACCC8E270AD8::urn:axis-com:service:BasicService:1"
 		assert.Equal(t, want, got)
 	}

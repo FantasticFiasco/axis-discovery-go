@@ -30,19 +30,19 @@ func ListenPassive(alive AliveHandler, byeBye ByeByeHandler) error {
 			return errors.Wrap(err, "Failed to read from UDP connection")
 		}
 		m := parseMessage(b[:n])
-		if m[method] != "NOTIFY * HTTP/1.1" ||
-			m[nt] != "urn:axis-com:service:BasicService:1" {
+		if m.method == notify ||
+			m.headers[nt] != "urn:axis-com:service:BasicService:1" {
 			continue
 		}
-		if m[nts] == "ssdp:alive" {
+		if m.headers[nts] == "ssdp:alive" {
 			alive(toDevice(addr, m))
-		} else if m[nts] == "ssdp:byebye" {
+		} else if m.headers[nts] == "ssdp:byebye" {
 			byeBye(toDevice(addr, m))
 		}
 	}
 }
 
-func toDevice(addr *net.UDPAddr, m message) *Device {
+func toDevice(addr *net.UDPAddr, m *message) *Device {
 	return &Device{
 		//Addr:    addr,
 		MACAddr: "TODO",

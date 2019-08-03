@@ -8,16 +8,16 @@ import (
 
 func main() {
 	fmt.Println("Listen passively for devices...")
-	err := ssdpdiscovery.ListenPassive(alive, byeBye)
+	err := ssdpdiscovery.ListenPassive(onAlive, onByeBye)
 	if err != nil {
 		panic(errors.Cause(err))
 	}
 }
 
-func alive(d ssdpdiscovery.Device) {
+func onAlive(d *ssdpdiscovery.Device) {
 	fmt.Printf("Received alive notification from MAC %s on address %s\n", d.MACAddr, d.Addr)
 }
 
-func byeBye(d ssdpdiscovery.Device) {
+func onByeBye(d *ssdpdiscovery.Device) {
 	fmt.Printf("Received byebye notification from MAC %s on address %s\n", d.MACAddr, d.Addr)
 }

@@ -1,4 +1,4 @@
-package discoveryssdp
+package ssdpdiscovery
 
 import "log"
 
