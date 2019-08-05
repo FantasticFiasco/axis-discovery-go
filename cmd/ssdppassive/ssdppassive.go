@@ -4,11 +4,14 @@ import (
 	"fmt"
 	"github.com/FantasticFiasco/axis-discovery-go/ssdpdiscovery"
 	"github.com/pkg/errors"
+	"log"
+	"os"
 )
 
 func main() {
 	fmt.Println("Listen passively for devices...")
-	err := ssdpdiscovery.ListenPassive(onAlive, onByeBye)
+	ssdpdiscovery.Logger = log.New(os.Stderr, "[Discovery(SSDP)] ", log.LstdFlags)
+	err := ssdpdiscovery.Lurk(onAlive, onByeBye)
 	if err != nil {
 		panic(errors.Cause(err))
 	}
